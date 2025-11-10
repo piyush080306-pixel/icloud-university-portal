@@ -1,6 +1,7 @@
 🏫 **iCloudEMS Core Campus – Secure Student Portal**
 
 🔐 **About**
+
 **iCloudEMS Core Campus** is a fully interactive web-based student information and management portal built to simulate a modern **university dashboard system**.
 It provides **secure login authentication**, **CAPTCHA verification**, and a visually polished **student dashboard** that centralizes all academic and administrative data — from attendance and grades to service requests and notifications.
 
@@ -9,6 +10,7 @@ This project demonstrates a complete **frontend engineering system** with seamle
 ---
 
 ✨ **Features**
+
 🎯 **Modern Login System** with floating labels, password toggle, and CAPTCHA verification
 🔑 **Secure Authentication Flow** with dynamic validation
 🧩 **Interactive Dashboard** featuring animated widgets and dynamic module loading
@@ -28,6 +30,7 @@ This project demonstrates a complete **frontend engineering system** with seamle
 ---
 
 🧰 **Technologies Used**
+
 🧱 **HTML5** – Structured semantic markup for pages and components
 🎨 **CSS3 (Glassmorphism + Custom Variables)** – Transparent frosted layers and neon glow effects
 ⚙️ **JavaScript (Vanilla JS)** – Core interactivity, data handling, and animations
@@ -59,6 +62,7 @@ Then open your browser and go to 👉 **[http://localhost:8000/Icloud.html](http
 ---
 
 ☕ **Usage**
+
 🔐 Login using valid credentials and CAPTCHA verification.
 🧭 Navigate modules via sidebar (Profile, Academics, Attendance, Results, Fees, LMS, etc.)
 📊 Explore dashboard widgets with live counters and progress animations.
@@ -71,6 +75,7 @@ Then open your browser and go to 👉 **[http://localhost:8000/Icloud.html](http
 ---
 
 🤝 **Contributing**
+
 Contributions are welcome to enhance interactivity and add new student services.
 
 To contribute:
