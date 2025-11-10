@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Meta and Fonts -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iCloudEMS Core Campus - Secure Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="login-page" class="page login-container">
+        <div class="logo"><i class="fas fa-university"></i>iCloudEMS</div>
+        <h2>Core Campus Secure Login</h2>
+        
+        <form id="loginForm" novalidate>
+            <div class="form-group">
+                <input type="text" id="loginId" name="loginId" required autocomplete="username">
+                <i class="fas fa-user input-icon"></i>
+                <label for="loginId">Login ID</label>
+            </div>
+
+            <div class="form-group password-wrapper">
+                <input type="password" id="password" name="password" required autocomplete="current-password">
+                <i class="fas fa-lock input-icon"></i>
+                <i class="fas fa-eye toggle-password" id="togglePassword"></i>
+                <label for="password">Password</label>
+            </div>
+            
+            <div class="form-group">
+                <label for="verificationCode">Verification Code</label>
+                <div class="verification-code-group">
+                    <input type="text" id="verificationCode" name="verificationCode" maxlength="6" required>
+                    <canvas id="captchaCanvas" class="captcha-canvas" title="Click to refresh CAPTCHA"></canvas>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="collegeBranch">Select College / Branch</label>
+                <select id="collegeBranch" name="collegeBranch" required>
+                    <option value="" disabled selected>-- Select Campus --</option>
+                    <option value="krmu">K.R. Mangalam University (KR-MU)</option>
+                    <option value="other">Other Campus/Branch</option>
+                </select>
+            </div>
+
+            <button type="submit" class="login-button">Login</button>
+            
+            <div class="footer-links">
+                <a href="#">Forgot Password?</a>
+                <a href="#">Help</a>
+            </div>
+        </form>
+    </div>
+
+    <div id="dashboard-page" class="page">
+        <div class="dashboard-layout">
+            <aside class="sidebar" id="sidebar">
+                <div class="sidebar-header">
+                    <h3>K.R. Mangalam University</h3>
+                </div>
+                <nav>
+                    <ul class="sidebar-nav">
+                        <li><a href="#" data-content="dashboard" class="active"><i class="fas fa-tachometer-alt nav-icon"></i> Dashboard</a></li>
+                        <li><a href="#" data-content="profile" title="Direct link to view and edit personal and contact information."><span class="nav-icon">👤</span> My Profile</a></li>
+                        <li><a href="#" data-content="academics" title="Overview of the current course, semester, and enrollment details."><span class="nav-icon">🎓</span> Academics</a></li>
+                        <li><a href="#" data-content="attendance" title="Track subject-wise attendance records and overall percentage."><span class="nav-icon">✅</span> Attendance</a></li>
+                        <li><a href="#" data-content="results" title="View official exam results, GPA/CGPA, and grade sheets."><span class="nav-icon">📈</span> Results & Grades</a></li>
+                        <li><a href="#" data-content="fee-details" title="Check installment status, outstanding dues, and view past receipts."><span class="nav-icon">💰</span> Fee Details</a></li>
+                        <li><a href="#" data-content="grievance" title="Submit and track complaints or issues with various departments."><span class="nav-icon">📣</span> Grievance Redressal</a></li>
+                        <li><a href="#" data-content="timetable" title="View the current class and examination schedules."><span class="nav-icon">🗓️</span> Time Table</a></li>
+                        <li><a href="#" data-content="service-requests" title="Apply for official documents like transcripts, bonafide certificates, etc."><span class="nav-icon">📋</span> Service Requests</a></li>
+                        <li><a href="#" data-content="lms" title="Access the Learning Management System for course materials and submitted assignments."><span class="nav-icon">📚</span> LMS/Assignments</a></li>
+                        <li><a href="#" data-content="hostel-transport" title="Manage registration and details related to accommodation or commuting."><span class="nav-icon">🚌</span> Hostel/Transport</a></li>
+                        <li><a href="#" data-content="notifications" title="View all alerts, announcements, and important messages."><span class="nav-icon">🔔</span> Notifications</a></li>
+                        <li><a href="#" data-content="neft-payment" title="Dedicated link for secure online fee payments via NEFT/RTGS."><span class="nav-icon">💳</span> NEFT Payment</a></li>
+                        <li><a href="#" data-content="settings" title="Portal configuration options, including password change and privacy settings."><span class="nav-icon">⚙️</span> Settings</a></li>
+                        <li><a href="#" id="logout-btn"><i class="fas fa-sign-out-alt nav-icon"></i> Logout</a></li>
+                    </ul>
+                </nav>
+            </aside>
+            <main class="main-content">
+                <header class="dashboard-header">
+                    <div>
+                        <h1 id="welcome-heading">Welcome, Piyush</h1>
+                        <div class="user-status">
+                            <div class="online-indicator" title="Online"></div>
+                            <span id="current-datetime"></span>
+                        </div>
+                    </div>
+                    <div class="header-actions">
+                        <div class="notification-bell tooltip" id="notification-bell" aria-label="Notifications">
+                            <i class="fas fa-bell"></i>
+                            <span class="notification-count show" id="notification-count">3</span>
+                        </div>
+                        <div class="notification-dropdown" id="notification-dropdown">
+                            <div class="notification-header">
+                                <span>Notifications</span>
+                                <button class="mark-all-read" id="mark-all-read">Mark All Read</button>
+                            </div>
+                            <div id="notification-items">
+                                <!-- Items will be populated by JS -->
+                            </div>
+                        </div>
+                        <button class="hamburger-menu" id="hamburger-menu"><i class="fas fa-bars"></i></button>
+                    </div>
+                </header>
+
+                <!-- Skeleton Loader -->
+                <div id="skeleton-loader" class="skeleton-wrapper">
+                    <div class="skeleton skeleton-header"></div>
+                    <div class="skeleton skeleton-subheader"></div>
+                    <div class="widget-grid">
+                        <div class="skeleton skeleton-widget"></div>
+                        <div class="skeleton skeleton-widget"></div>
+                        <div class="skeleton skeleton-widget"></div>
+                        <div class="skeleton skeleton-widget"></div>
+                    </div>
+                </div>
+
+                <!-- Dashboard Content -->
+                <div id="content-dashboard" class="content-wrapper" style="display: block;">
+                    <div class="widget-grid">
+                        <div class="widget attendance highlight clickable" data-target-content="attendance">
+                            <div class="widget-header">
+                                <div class="widget-icon"><i class="fas fa-calendar-check"></i></div>
+                                <h4>Attendance Health</h4>
+                            </div>
+                            <div class="widget-content">
+                                <p data-count="85">0%</p>
+                                <small>Click to view details</small>
+                            </div>
+                        </div>
+                        <div class="widget fees highlight clickable" data-target-content="fee-details">
+                            <div class="widget-header">
+                                <div class="widget-icon"><i class="fas fa-rupee-sign"></i></div>
+                                <h4>Financial Status</h4>
+                            </div>
+                            <div class="widget-content">
+                                <p>₹ <span data-count="5000">0</span></p>
+                                <small>Pending Dues</small>
+                            </div>
+                        </div>
+                        <div class="widget grade clickable" data-target-content="grade-details">
+                            <div class="widget-header">
+                                <div class="widget-icon"><i class="fas fa-graduation-cap"></i></div>
+                                <h4>Grade Performance</h4>
+                            </div>
+                            <div class="widget-content">
+                                <p data-count="85">0%</p>
+                                <small>Overall Grade</small>
+                            </div>
+                        </div>
+                        <div class="widget grade clickable" data-target-content="results">
+                            <div class="widget-header">
+                                <div class="widget-icon"><i class="fas fa-star"></i></div>
+                                <h4>Academic Grade</h4>
+                            </div>
+                            <div class="widget-content">
+                                <p>A+</p>
+                                <small>Last SGPA: 9.2</small>
+                            </div>
+                        </div>
+                        <div class="widget alert clickable" data-target-content="notifications">
+                            <div class="widget-header">
+                                <div class="widget-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                                <h4>Urgent Alerts</h4>
+                            </div>
+                            <div class="widget-content">
+                                <p class="snippet">End Term Exam Schedule has been released. Last date for fee payment is 30th April.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <h3 style="margin-top: 40px; margin-bottom: 20px; color: var(--text-color);">Core Campus Modules</h3>
+                    <div class="widget-grid">
+                        <div class="widget clickable" data-target-content="profile">
+                            <div class="widget-header">
+                                <div class="widget-icon">👤</div>
+                                <h4>My Profile</h4>
+                            </div>
+                            <div class="widget-content">
+                                <small>Quick access to personal and contact information.</small>
+                            </div>
+                        </div>
+                        <div class="widget clickable" data-target-content="academics">
+                            <div class="widget-header">
+                                <div class="widget-icon">🎓</div>
+                                <h4>Academics</h4>
+                            </div>
+                            <div class="widget-content">
+                                <small>Overview of current program, branch, and semester status.</small>
+                            </div>
+                        </div>
+                        <div class="widget clickable" data-target-content="attendance">
+                            <div class="widget-header">
+                                <div class="widget-icon">✅</div>
+                                <h4>Attendance</h4>
+                            </div>
+                            <div class="widget-content">
+                                <small>Summary of current attendance percentage.</small>
+                            </div>
+                        </div>
+                        <div class="widget clickable" data-target-content="results">
+                            <div class="widget-header">
+                                <div class="widget-icon">📈</div>
+                                <h4>Results & Grades</h4>
+                            </div>
+                            <div class="widget-content">
+                                <small>Access to exam scores and academic performance.</small>
+                            </div>
+                        </div>
+                        <div class="widget clickable" data-target-content="fee-details">
+                            <div class="widget-header">
+                                <div class="widget-icon">💰</div>
+                                <h4>Fee Details</h4>
+                            </div>
+                            <div class="widget-content">
+                                <small>Overview of financial status, dues, and payment history.</small>
+                            </div>
+                        </div>
+                        <div class="widget clickable" data-target-content="grievance">
+                            <div class="widget-header">
+                                <div class="widget-icon">📣</div>
+                                <h4>Grievance Redressal</h4>
+                            </div>
+                            <div class="widget-content">
+                                <small>Link to submit and track active student grievances.</small>
+                            </div>
+                        </div>
+                        <div class="widget clickable" data-target-content="timetable">
+                            <div class="widget-header">
+                                <div class="widget-icon">🗓️</div>
+                                <h4>Time Table</h4>
+                            </div>
+                            <div class="widget-content">
+                                <small>View of daily class and lab schedules.</small>
+                            </div>
+                        </div>
+                        <div class="widget clickable" data-target-content="service-requests">
+                            <div class="widget-header">
+                                <div class="widget-icon">📋</div>
+                                <h4>Service Requests</h4>
+                            </div>
+                            <div class="widget-content">
+                                <small>Portal for requesting official documents (e.g., transcripts).</small>
+                            </div>
+                        </div>
+                        <div class="widget clickable" data-target-content="lms">
+                            <div class="widget-header">
+                                <div class="widget-icon">📚</div>
+                                <h4>LMS/Assignments</h4>
+                            </div>
+                            <div class="widget-content">
+                                <small>Direct link to the Learning Management System and submissions.</small>
+                            </div>
+                        </div>
+                        <div class="widget clickable" data-target-content="hostel-transport">
+                            <div class="widget-header">
+                                <div class="widget-icon">🚌</div>
+                                <h4>Hostel/Transport</h4>
+                            </div>
+                            <div class="widget-content">
+                                <small>Management of residential or commuting services.</small>
+                            </div>
+                        </div>
+                        <div class="widget clickable" data-target-content="notifications">
+                            <div class="widget-header">
+                                <div class="widget-icon">🔔</div>
+                                <h4>Notifications</h4>
+                            </div>
+                            <div class="widget-content">
+                                <small>Full log of campus alerts and announcements.</small>
+                            </div>
+                        </div>
+                        <div class="widget clickable" data-target-content="neft-payment">
+                            <div class="widget-header">
+                                <div class="widget-icon">💳</div>
+                                <h4>NEFT Payment</h4>
+                            </div>
+                            <div class="widget-content">
+                                <small>Dedicated portal for making quick NEFT/online fee payments.</small>
+                            </div>
+                        </div>
+                        <div class="widget clickable" data-target-content="settings">
+                            <div class="widget-header">
+                                <div class="widget-icon">⚙️</div>
+                                <h4>Settings</h4>
+                            </div>
+                            <div class="widget-content">
+                                <small>Configuration and account security options.</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- My Profile Content -->
+                <div id="content-profile" class="content-wrapper">
+                    <div class="content-card">
+                        <h3>My Profile</h3>
+                        <div class="profile-grid">
+                            <div class="content-card">
+                                <h4>Personal Details</h4>
+                                <ul class="profile-details-list">
+                                    <li><span>Student Name</span><strong>Piyush Kumar</strong></li>
+                                    <li><span>Date of Birth</span><strong>08 Mar 2006</strong></li>
+                                    <li><span>Email</span><strong>piyush.btech@krmu.ac.in</strong></li>
+                                    <li><span>Mobile</span><strong>+91 9876543210</strong></li>
+                                    <li><span>Address</span><strong>Aryabhatta Boys Hostel, Room A-305, Sohna Road, Gurugram</strong></li>
+                                    <li><span>Blood Group</span><strong>O+</strong></li>
+                                    <li><span>Emergency Contact</span><strong>+91 9876543211 (Father)</strong></li>
+                                </ul>
+                            </div>
+                            <div class="content-card">
+                                <h4>Academic Details</h4>
+                                <ul class="profile-details-list">
+                                    <li><span>Enrollment No.</span><strong>KRMU-22-12345</strong></li>
+                                    <li><span>Program</span><strong>Bachelor of Technology (Computer Science & Engineering)</strong></li>
+                                    <li><span>Current Semester</span><strong>4th</strong></li>
+                                    <li><span>Admission Year</span><strong>2022</strong></li>
+                                    <li><span>CGPA</span><strong>8.9</strong></li>
+                                    <li><span>Academic Advisor</span><strong>Dr. A. Sharma</strong></li>
+                                    <li><span>Scholarship Status</span><strong>Merit Scholarship (₹25,000/year)</strong></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="content-card">
+                            <h4>Additional Information</h4>
+                            <ul class="profile-details-list">
+                                <li><span>Hostel</span><strong>Aryabhatta Boys Hostel, Room A-305</strong></li>
+                                <li><span>Transport Route</span><strong>Route 5 (Gurugram to Sohna)</strong></li>
+                                <li><span>Library Membership</span><strong>Active (Books Issued: 3)</strong></li>
+                                <li><span>Sports Club</span><strong>Cricket Club Member</strong></li>
+                                <li><span>Medical Records</span><strong>Last Checkup: 15 Mar 2024</strong></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Academics Content -->
+                <div id="content-academics" class="content-wrapper">
+                    <div class="content-card">
+                        <h3>My Courses (Semester 4)</h3>
+                        <table>
+                            <thead><tr><th>Course Code</th><th>Course Name</th><th>Credits</th><th>Syllabus</th></tr></thead>
+                            <tbody>
+                                <tr><td>CS-401</td><td>Data Structures & Algorithms</td><td>4</td><td><a href="#" class="btn-primary syllabus-view-btn" data-course="dsa">View</a></td></tr>
+                                <tr><td>CS-402</td><td>Operating Systems</td><td>4</td><td><a href="#" class="btn-primary syllabus-view-btn" data-course="os">View</a></td></tr>
+                                <tr><td>CS-403</td><td>Database Management Systems</td><td>3</td><td><a href="#" class="btn-primary syllabus-view-btn" data-course="dbms">View</a></td></tr>
+                                <tr><td>EC-405</td><td>Digital Electronics</td><td>3</td><td><a href="#" class="btn-primary syllabus-view-btn" data-course="de">View</a></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="content-card">
+                        <h3>Program Details</h3>
+                        <ul class="profile-details-list">
+                            <li><span>Program Name</span><strong>Bachelor of Technology</strong></li>
+                            <li><span>Branch</span><strong>Computer Science & Engineering</strong></li>
+                            <li><span>Duration</span><strong>4 Years (8 Semesters)</strong></li>
+                            <li><span>Academic Scheme</span><a href="#" class="btn-primary">Download Scheme</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Attendance Content -->
+                <div id="content-attendance" class="content-wrapper">
+                    <div class="content-card">
+                        <h3>Attendance Record (Semester 4)</h3>
+                        <div class="attendance-summary">
+                            <h4>Overall Attendance</h4>
+                            <div class="overall-percentage">80.2%</div>
+                        </div>
+                        <div class="attendance-grid">
+                            <div class="attendance-card good">
+                                <div class="attendance-card-header">
+                                    <div class="attendance-icon"><i class="fas fa-code"></i></div>
+                                    <h5>Data Structures & Algorithms</h5>
+                                </div>
+                                <div class="attendance-stats">
+                                    <div class="attendance-stat">
+                                        <div class="stat-value">40</div>
+                                        <div class="stat-label">Total</div>
+                                    </div>
+                                    <div class="attendance-stat">
+                                        <div class="stat-value">35</div>
+                                        <div class="stat-label">Attended</div>
+                                    </div>
+                                </div>
+                                <div class="circular-progress">
+                                    <svg>
+                                        <circle class="bg" cx="40" cy="40" r="35"></circle>
+                                        <circle class="fg" cx="40" cy="40" r="35" data-dashoffset="27.5"></circle>
+                                    </svg>
+                                    <div class="percentage">87.5%</div>
+                                </div>
+                            </div>
+                            <div class="attendance-card good">
+                                <div class="attendance-card-header">
+                                    <div class="attendance-icon"><i class="fas fa-cogs"></i></div>
+                                    <h5>Operating Systems</h5>
+                                </div>
+                                <div class="attendance-stats">
+                                    <div class="attendance-stat">
+                                        <div class="stat-value">42</div>
+                                        <div class="stat-label">Total</div>
+                                    </div>
+                                    <div class="attendance-stat">
+                                        <div class="stat-value">38</div>
+                                        <div class="stat-label">Attended</div>
+                                    </div>
+                                </div>
+                                <div class="circular-progress">
+                                    <svg>
+                                        <circle class="bg" cx="40" cy="40" r="35"></circle>
+                                        <circle class="fg" cx="40" cy="40" r="35" data-dashoffset="17.32"></circle>
+                                    </svg>
+                                    <div class="percentage">90.4%</div>
+                                </div>
+                            </div>
+                            <div class="attendance-card warning">
+                                <div class="attendance-card-header">
+                                    <div class="attendance-icon"><i class="fas fa-database"></i></div>
+                                    <h5>Database Management Systems</h5>
+                                </div>
+                                <div class="attendance-stats">
+                                    <div class="attendance-stat">
+                                        <div class="stat-value">35</div>
+                                        <div class="stat-label">Total</div>
+                                    </div>
+                                    <div class="attendance-stat">
+                                        <div class="stat-value">27</div>
+                                        <div class="stat-label">Attended</div>
+                                    </div>
+                                </div>
+                                <div class="circular-progress">
+                                    <svg>
+                                        <circle class="bg" cx="40" cy="40" r="35"></circle>
+                                        <circle class="fg" cx="40" cy="40" r="35" data-dashoffset="48.38"></circle>
+                                    </svg>
+                                    <div class="percentage">77.1%</div>
+                                </div>
+                            </div>
+                            <div class="attendance-card danger">
+                                <div class="attendance-card-header">
+                                    <div class="attendance-icon"><i class="fas fa-microchip"></i></div>
+                                    <h5>Digital Electronics</h5>
+                                </div>
+                                <div class="attendance-stats">
+                                    <div class="attendance-stat">
+                                        <div class="stat-value">38</div>
+                                        <div class="stat-label">Total</div>
+                                    </div>
+                                    <div class="attendance-stat">
+                                        <div class="stat-value">25</div>
+                                        <div class="stat-label">Attended</div>
+                                    </div>
+                                </div>
+                                <div class="circular-progress">
+                                    <svg>
+                                        <circle class="bg" cx="40" cy="40" r="35"></circle>
+                                        <circle class="fg" cx="40" cy="40" r="35" data-dashoffset="72.84"></circle>
+                                    </svg>
+                                    <div class="percentage">65.8%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Grade Details Content -->
+                <div id="content-grade-details" class="content-wrapper">
+                    <div class="content-card">
+                        <h3>Grade Performance Overview</h3>
+                        <div style="display: flex; gap: 20px; margin-bottom: 20px;">
+                            <div class="widget" style="flex: 1;"><h4>Overall CGPA: <strong>8.9</strong></h4></div>
+                            <div class="widget" style="flex: 1;"><h4>Current Semester GPA: <strong>9.1</strong></h4></div>
+                            <div class="widget" style="flex: 1;"><h4>Grade Points Earned: <strong>285/320</strong></h4></div>
+                        </div>
+                        <h4>Semester-wise Grade Performance</h4>
+                        <table>
+                            <thead><tr><th>Semester</th><th>SGPA</th><th>Credits Earned</th><th>Status</th></tr></thead>
+                            <tbody>
+                                <tr><td>Semester 1</td><td>8.5</td><td>20</td><td><span class="status-badge status-paid">Completed</span></td></tr>
+                                <tr><td>Semester 2</td><td>8.7</td><td>20</td><td><span class="status-badge status-paid">Completed</span></td></tr>
+                                <tr><td>Semester 3</td><td>9.2</td><td>22</td><td><span class="status-badge status-paid">Completed</span></td></tr>
+                                <tr><td>Semester 4</td><td>9.1</td><td>22</td><td><span class="status-badge status-submitted">In Progress</span></td></tr>
+                            </tbody>
+                        </table>
+                        <h4 style="margin-top: 30px;">Grade Distribution</h4>
+                        <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+                            <div class="widget" style="flex: 1; min-width: 150px;"><h5>O Grade: <strong>5</strong></h5><small>Outstanding</small></div>
+                            <div class="widget" style="flex: 1; min-width: 150px;"><h5>A+ Grade: <strong>8</strong></h5><small>Excellent</small></div>
+                            <div class="widget" style="flex: 1; min-width: 150px;"><h5>A Grade: <strong>3</strong></h5><small>Very Good</small></div>
+                            <div class="widget" style="flex: 1; min-width: 150px;"><h5>B+ Grade: <strong>1</strong></h5><small>Good</small></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Results Content -->
+                <div id="content-results" class="content-wrapper">
+                    <div class="content-card">
+                        <h3>Results & Grades</h3>
+                        <div style="display: flex; gap: 20px; margin-bottom: 20px;">
+                            <div class="widget" style="flex: 1;"><h4>CGPA: <strong>8.9</strong></h4></div>
+                            <div class="widget" style="flex: 1;"><h4>Last SGPA (Sem 3): <strong>9.2</strong></h4></div>
+                        </div>
+                        <h4>Semester 3 Results</h4>
+                        <table>
+                            <thead><tr><th>Subject</th><th>Sessional Marks (50)</th><th>End Term (50)</th><th>Total (100)</th><th>Grade</th></tr></thead>
+                            <tbody>
+                                <tr><td>Advanced Java</td><td>45</td><td>46</td><td>91</td><td>O</td></tr>
+                                <tr><td>Computer Networks</td><td>42</td><td>44</td><td>86</td><td>A+</td></tr>
+                                <tr><td>Software Engineering</td><td>40</td><td>41</td><td>81</td><td>A+</td></tr>
+                                <tr><td>Theory of Computation</td><td>38</td><td>40</td><td>78</td><td>A</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Time Table Content -->
+                <div id="content-timetable" class="content-wrapper">
+                    <div class="content-card">
+                        <h3>Weekly Time Table</h3>
+                        <div class="timetable-grid">
+                            <div class="timetable-header">Time</div>
+                            <div class="timetable-header">Mon</div><div class="timetable-header">Tue</div><div class="timetable-header">Wed</div><div class="timetable-header">Thu</div><div class="timetable-header">Fri</div><div class="timetable-header">Sat</div>
+                            
+                            <div class="timetable-time">9-10 AM</div>
+                            <div class="timetable-slot">
+                                <span class="subject">DSA</span>
+                                <span class="teacher">Dr. A. Sharma</span>
+                                <small class="course-code">CS-401</small>
+                            </div>
+                            <div class="timetable-slot">
+                                <span class="subject">OS</span>
+                                <span class="teacher">Prof. B. Gupta</span>
+                                <small class="course-code">CS-402</small>
+                            </div>
+                            <div class="timetable-slot">
+                                <span class="subject">DSA</span>
+                                <span class="teacher">Dr. A. Sharma</span>
+                                <small class="course-code">CS-401</small>
+                            </div>
+                            <div class="timetable-slot">
+                                <span class="subject">OS</span>
+                                <span class="teacher">Prof. B. Gupta</span>
+                                <small class="course-code">CS-402</small>
+                            </div>
+                            <div class="timetable-slot">
+                                <span class="subject">DBMS</span>
+                                <span class="teacher">Dr. C. Verma</span>
+                                <small class="course-code">CS-403</small>
+                            </div>
+                            <div class="timetable-slot"></div>
+                            
+                            <div class="timetable-time">10-11 AM</div>
+                            <div class="timetable-slot"><span class="subject">OS</span><span class="teacher">Prof. B. Gupta</span><small class="course-code">CS-402</small></div>
+                            <div class="timetable-slot"><span class="subject">DBMS</span><span class="teacher">Dr. C. Verma</span><small class="course-code">CS-403</small></div>
+                            <div class="timetable-slot"><span class="subject">OS</span><span class="teacher">Prof. B. Gupta</span><small class="course-code">CS-402</small></div>
+                            <div class="timetable-slot"><span class="subject">DBMS</span><span class="teacher">Dr. C. Verma</span><small class="course-code">CS-403</small></div>
+                            <div class="timetable-slot"><span class="subject">DE</span><span class="teacher">Prof. D. Singh</span><small class="course-code">EC-405</small></div>
+                            <div class="timetable-slot"></div>
+
+                            <div class="timetable-time">11-12 PM</div>
+                            <div class="timetable-slot"><span class="subject">DE</span><span class="teacher">Prof. D. Singh</span><small class="course-code">EC-405</small></div>
+                            <div class="timetable-slot"><span class="subject">DSA</span><span class="teacher">Dr. A. Sharma</span><small class="course-code">CS-401</small></div>
+                            <div class="timetable-slot"><span class="subject">DE</span><span class="teacher">Prof. D. Singh</span><small class="course-code">EC-405</small></div>
+                            <div class="timetable-slot"><span class="subject">DSA</span><span class="teacher">Dr. A. Sharma</span><small class="course-code">CS-401</small></div>
+                            <div class="timetable-slot"><span class="subject">OS</span><span class="teacher">Prof. B. Gupta</span><small class="course-code">CS-402</small></div>
+                            <div class="timetable-slot"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fee Details Content -->
+                <div id="content-fee-details" class="content-wrapper">
+                    <div class="content-card">
+                        <h3>Fee Summary</h3>
+                        <div class="widget-grid">
+                            <div class="widget"><h4>Total Fee: <strong>₹2,00,000</strong></h4></div>
+                            <div class="widget fees"><h4>Paid: <strong>₹1,95,000</strong></h4></div>
+                            <div class="widget alert"><h4>Pending: <strong>₹5,000</strong></h4></div>
+                        </div>
+                    </div>
+                    <div class="content-card">
+                        <h3>Payment Ledger</h3>
+                        <table>
+                            <thead><tr><th>Invoice No.</th><th>Date</th><th>Amount</th><th>Status</th><th>Action</th></tr></thead>
+                            <tbody>
+                                <tr><td>INV-SEM4-001</td><td>15 Jan 2024</td><td>₹1,00,000</td><td><span class="status-badge status-paid">Paid</span></td><td><a href="#" class="btn-primary fee-action-btn" data-invoice="INV-SEM4-001"><i class="fas fa-receipt"></i> Receipt</a></td></tr>
+                                <tr><td>INV-SEM3-002</td><td>10 Aug 2023</td><td>₹50,000</td><td><span class="status-badge status-paid">Paid</span></td><td><a href="#" class="btn-primary fee-action-btn" data-invoice="INV-SEM4-001"><i class="fas fa-receipt"></i> Receipt</a></td></tr>
+                                <tr><td>INV-SEM3-001</td><td>15 Jul 2023</td><td>₹50,000</td><td><span class="status-badge status-paid">Paid</span></td><td><a href="#" class="btn-primary fee-action-btn" data-invoice="INV-SEM4-001"><i class="fas fa-receipt"></i> Receipt</a></td></tr>
+                                <tr><td>LATE-FEE-01</td><td>01 Feb 2024</td><td>₹5,000</td><td><span class="status-badge status-pending">Pending</span></td><td><a href="#" class="btn-primary fee-action-btn" data-invoice="LATE-FEE-01" style="background-color: var(--error-color); animation: pulse-red 1.5s infinite;">Pay Now</a></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Grievance Redressal Content -->
+                <div id="content-grievance" class="content-wrapper">
+                    <div class="content-card">
+                        <h3>Grievance Redressal Dashboard</h3>
+                        <div class="grievance-summary">
+                            <h4>Grievance Overview</h4>
+                            <div class="overall-grievance-stats">Total Grievances: 5 | Resolved: 3 | Pending: 2</div>
+                        </div>
+                        <div class="grievance-grid">
+                            <div class="grievance-card resolved">
+                                <div class="grievance-card-header">
+                                    <div class="grievance-icon"><i class="fas fa-check-circle"></i></div>
+                                    <h5>Resolved Grievances</h5>
+                                </div>
+                                <div class="grievance-stats">
+                                    <div class="grievance-stat">
+                                        <div class="stat-value">3</div>
+                                        <div class="stat-label">Total</div>
+                                    </div>
+                                </div>
+                                <div class="circular-progress">
+                                    <svg>
+                                        <circle class="bg" cx="40" cy="40" r="35"></circle>
+                                        <circle class="fg" cx="40" cy="40" r="35" data-dashoffset="110"></circle>
+                                    </svg>
+                                    <div class="percentage">60%</div>
+                                </div>
+                            </div>
+                            <div class="grievance-card pending">
+                                <div class="grievance-card-header">
+                                    <div class="grievance-icon"><i class="fas fa-clock"></i></div>
+                                    <h5>Pending Grievances</h5>
+                                </div>
+                                <div class="grievance-stats">
+                                    <div class="grievance-stat">
+                                        <div class="stat-value">2</div>
+                                        <div class="stat-label">Total</div>
+                                    </div>
+                                </div>
+                                <div class="circular-progress">
+                                    <svg>
+                                        <circle class="bg" cx="40" cy="40" r="35"></circle>
+                                        <circle class="fg" cx="40" cy="40" r="35" data-dashoffset="157"></circle>
+                                    </svg>
+                                    <div class="percentage">40%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="content-card grievance-card">
+                        <h3><i class="fas fa-plus-circle"></i> File a New Grievance</h3>
+                        <div class="confidentiality-notice">
+                            <i class="fas fa-shield-alt"></i> <strong>Confidentiality Notice:</strong> All grievances are handled confidentially by the Student Redressal Committee. Misuse of this system may result in disciplinary action.
+                        </div>
+                        <form id="grievance-form">
+                            <div class="form-group">
+                                <label for="grievance-type">Grievance Type</label>
+                                <select id="grievance-type" required>
+                                    <option value="" disabled selected>-- Select Grievance Category --</option>
+                                    <option value="Academic Misconduct (Faculty)">Academic Misconduct (Faculty)</option>
+                                    <option value="Administrative/Departmental Issue">Administrative/Departmental Issue</option>
+                                    <option value="Infrastructure/Facilities Complaint">Infrastructure/Facilities Complaint</option>
+                                    <option value="Harassment/Bullying (Specify Target)">Harassment/Bullying (Specify Target)</option>
+                                    <option value="Examination/Evaluation Discrepancy">Examination/Evaluation Discrepancy</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="grievance-against">Against Whom</label>
+                                <select id="grievance-against" required>
+                                    <option value="" disabled selected>-- Select Concerned Party --</option>
+                                    <option value="Specific Faculty Member">Specific Faculty Member</option>
+                                    <option value="Department/Office">Department/Office</option>
+                                    <option value="Fellow Student">Fellow Student</option>
+                                    <option value="General/Other">General/Other</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="grievance-title">Grievance Title/Subject</label>
+                                <input type="text" id="grievance-title" placeholder="e.g., Unfair Grading in CS-401" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="grievance-details">Detailed Account</label>
+                                <textarea id="grievance-details" rows="6" placeholder="Provide a clear, detailed account of the issue, including dates, times, and any individuals involved..." required style="width: 100%; padding: 12px 15px; font-size: 16px; background: transparent; color: var(--text-color); border: 1px solid var(--input-border-color); border-radius: 8px;"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="grievance-file">Supporting Documents (Optional)</label>
+                                <input type="file" id="grievance-file" style="padding: 12px; border: 1px solid var(--input-border-color); border-radius: 8px; width: 100%;">
+                            </div>
+                            <button type="submit" class="login-button" style="width: auto; padding: 12px 30px;"><i class="fas fa-paper-plane"></i> File Formal Grievance</button>
+                        </form>
+                    </div>
+                    <div class="content-card">
+                        <h3><i class="fas fa-history"></i> My Grievance History</h3>
+                        <div class="grievance-history-grid">
+                            <!-- Mock Data -->
+                            <div class="grievance-history-card" data-grievance-id="GRV-2024/A-005">
+                                <div class="grievance-history-header">
+                                    <div class="grievance-id">GRV-2024/A-005</div>
+                                    <span class="status-badge" style="background-color: var(--badge-hearing-bg); color: var(--badge-hearing-text);">Review & Hearing Scheduled</span>
+                                </div>
+                                <div class="grievance-history-body">
+                                    <p><strong>Type:</strong> Examination/Evaluation Discrepancy</p>
+                                    <p><strong>Date Filed:</strong> 18 Apr 2024</p>
+                                    <button class="btn-primary view-grievance-btn">View Details</button>
+                                </div>
+                            </div>
+                            <div class="grievance-details-row" id="details-GRV-2024/A-005" style="display: none;">
+                                <div class="ticket-details-content">
+                                    <ul class="ticket-history">
+                                        <li><strong>Decision Rendered</strong><small>25 Apr 2024</small><p>After review, a re-evaluation was conducted. The grade has been updated from B+ to A.</p></li>
+                                        <li><strong>Review & Hearing Scheduled</strong><small>22 Apr 2024</small><p>A hearing with the examination committee is scheduled for 24th April 2024.</p></li>
+                                        <li><strong>Investigation In Progress</strong><small>20 Apr 2024</small><p>The answer sheet has been retrieved for re-evaluation by a neutral faculty member.</p></li>
+                                        <li><strong>Assigned to Committee</strong><small>19 Apr 2024</small><p>Grievance assigned to Dr. S. Verma, Head of Examination Cell.</p></li>
+                                        <li><strong>Filed & Awaiting Screening</strong><small>18 Apr 2024</small><p>Grievance successfully filed and is awaiting initial screening by the committee.</p></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Service Requests Content -->
+                <div id="content-service-requests" class="content-wrapper">
+                    <div class="content-card">
+                        <h3>Submit a New Service Request</h3>
+                        <form id="service-request-form">
+                            <div class="form-group">
+                                <label for="request-category">Request Category</label>
+                                <select id="request-category" required>
+                                    <option value="" disabled selected>-- Select a Category --</option>
+                                    <option value="Document Request">Document Request (Transcript, Bonafide, etc.)</option>
+                                    <option value="Academic Change">Academic Change (Course Drop/Add)</option>
+                                    <option value="IT/Technical Support">IT/Technical Support (Login, LMS Access)</option>
+                                    <option value="Administrative/Fee Inquiry">Administrative/Fee Inquiry</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="request-subject">Subject</label>
+                                <input type="text" id="request-subject" placeholder="e.g., Request for Bonafide Certificate" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="request-description">Description</label>
+                                <textarea id="request-description" rows="5" placeholder="Please provide complete details including roll number and context..." required style="width: 100%; padding: 12px 15px; font-size: 16px; background: transparent; color: var(--text-color); border: 1px solid var(--input-border-color); border-radius: 8px;"></textarea>
+                            </div>
+                            <button type="submit" class="login-button" style="width: auto; padding: 12px 30px;">Submit New Request</button>
+                        </form>
+                    </div>
+
+                    <div class="content-card">
+                        <h3>My Requests</h3>
+                        <table class="request-table">
+                            <thead>
+                                <tr>
+                                    <th>Ticket ID</th>
+                                    <th>Date Submitted</th>
+                                    <th>Category</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="request-table-body">
+                                <!-- Mock Data -->
+                                <tr data-ticket-id="SRV-2024-00123">
+                                    <td>SRV-2024-00123</td>
+                                    <td>20 Apr 2024, 10:30 AM</td>
+                                    <td>Document Request</td>
+                                    <td><span class="status-badge status-paid">Resolved</span></td>
+                                    <td><button class="btn-primary view-ticket-btn">View</button></td>
+                                </tr>
+                                <tr class="ticket-details-row" id="details-SRV-2024-00123"><td colspan="5"><div class="ticket-details-content"><div class="resolution-banner resolved"><strong>Resolution:</strong> Your Bonafide Certificate has been generated and is available for download from the documents portal. Closed on: 21 Apr 2024.</div></div></td></tr>
+                                
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- LMS/Assignments Content -->
+                <div id="content-lms" class="content-wrapper">
+                    <div class="content-card">
+                        <h3>LMS / Assignments</h3>
+                        <table>
+                            <thead><tr><th>Subject</th><th>Assignment Title</th><th>Due Date</th><th>Status</th><th>Action</th></tr></thead>
+                            <tbody>
+                                <tr><td>Data Structures & Algorithms</td><td>Lab Assignment 5: Trees</td><td>25 Apr 2024</td><td><span class="status-badge status-submitted">Submitted</span></td><td><a href="#" class="btn-primary lms-action-btn" data-action="view" data-assignment="dsa-trees"><i class="fas fa-eye"></i> View</a></td></tr>
+                                <tr><td>Operating Systems</td><td>Case Study: Linux vs Windows</td><td>28 Apr 2024</td><td><span class="status-badge status-submitted">Submitted</span></td><td><a href="#" class="btn-primary lms-action-btn" data-action="view" data-assignment="os-casestudy"><i class="fas fa-eye"></i> View</a></td></tr>
+                                <tr><td>Database Management Systems</td><td>Project: ER Diagram for University</td><td>02 May 2024</td><td><span class="status-badge status-pending">Pending</span></td><td><a href="#" class="btn-primary lms-action-btn" data-action="submit" data-assignment="dbms-project" style="background-color: var(--success-color);"><i class="fas fa-upload"></i> Submit</a></td></tr>
+                                <tr><td>Digital Electronics</td><td>Assignment 4: Logic Gates</td><td>22 Apr 2024</td><td><span class="status-badge status-overdue">Overdue</span></td><td><a href="#" class="btn-primary lms-action-btn" data-action="submit-overdue" data-assignment="de-assignment4" style="background-color: var(--error-color);"><i class="fas fa-exclamation-triangle"></i> Submit Now</a></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Hostel/Transport Content -->
+                <div id="content-hostel-transport" class="content-wrapper">
+                    <div class="content-card">
+                        <h3>Hostel Details</h3>
+                        <table>
+                            <tbody>
+                                <tr><th>Hostel Name</th><td>Aryabhatta Boys Hostel</td></tr>
+                                <tr><th>Room Number</th><td>A-305</td></tr>
+                                <tr><th>Room Type</th><td>Double Occupancy (AC)</td></tr>
+                                <tr><th>Warden Name</th><td>Mr. R.K. Singh</td></tr>
+                                <tr><th>Warden Contact</th><td>+91 9876543210</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="content-card">
+                        <h3>Transport Details</h3>
+                        <table>
+                            <tbody>
+                                <tr><th>Bus Route</th><td>Route 5 (Gurugram to Sohna)</td></tr>
+                                <tr><th>Bus Number</th><td>HR 55 AB 1234</td></tr>
+                                <tr><th>Stop Name</th><td>Subhash Chowk</td></tr>
+                                <tr><th>Driver Name</th><td>Mr. Suresh Kumar</td></tr>
+                                <tr><th>Driver Contact</th><td>+91 8765432109</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Notifications Content -->
+                <div id="content-notifications" class="content-wrapper">
+                    <div class="content-card">
+                        <h3>Notifications & Circulars</h3>
+                        <div class="notification-controls" style="display: flex; gap: 15px; margin-bottom: 20px; align-items: center;">
+                            <input type="text" id="notification-search" placeholder="Search notifications..." style="flex: 1; padding: 10px; border-radius: 8px; border: 1px solid var(--input-border-color); background: var(--background-color); color: var(--text-color);">
+                            <button id="mark-all-notifications-read" class="btn-primary">Mark All Read</button>
+                        </div>
+                        <table>
+                            <thead><tr><th>Date</th><th>Title</th><th>Category</th><th>Action</th></tr></thead>
+                            <tbody id="notifications-body">
+                                <tr class="unread"><td>20 Apr 2024</td><td><i class="fas fa-file-alt nav-icon" style="color: #6f42c1;"></i> Circular regarding End Term Examination Schedule</td><td>Examinations</td><td><a href="#" class="btn-primary notification-view-btn" data-notification="exam-schedule">View</a></td></tr>
+                                <tr class="unread"><td>18 Apr 2024</td><td><i class="fas fa-calendar-star nav-icon" style="color: #fd7e14;"></i> Notice for Convocation 2024 Registration</td><td>Events</td><td><a href="#" class="btn-primary notification-view-btn" data-notification="convocation">View</a></td></tr>
+                                <tr class="unread"><td>15 Apr 2024</td><td><i class="fas fa-info-circle nav-icon" style="color: #17a2b8;"></i> Holiday on account of Ram Navami</td><td>General</td><td><a href="#" class="btn-primary notification-view-btn" data-notification="holiday">View</a></td></tr>
+                                <tr><td>10 Apr 2024</td><td><i class="fas fa-money-bill-wave nav-icon" style="color: #28a745;"></i> Fee Payment Deadline Extension</td><td>Finance</td><td><a href="#" class="btn-primary notification-view-btn" data-notification="fee-deadline">View</a></td></tr>
+                                <tr><td>01 Apr 2024</td><td><i class="fas fa-graduation-cap nav-icon" style="color: #ffc107;"></i> Mid-Term Sessional Marks Published</td><td>Results</td><td><a href="#" class="btn-primary notification-view-btn" data-notification="sessional-marks">View</a></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Circulars & Notifications Content -->
+                <div id="content-notifications" class="content-wrapper">
+                    <div class="content-card">
+                        <h3>Circulars & Notifications</h3>
+                        <div class="settings-tabs" style="margin-bottom: 20px;">
+                            <button class="circular-filter-btn settings-tab-btn active" data-filter="all">All</button>
+                            <button class="circular-filter-btn settings-tab-btn" data-filter="academic">Academic</button>
+                            <button class="circular-filter-btn settings-tab-btn" data-filter="fee">Fee</button>
+                            <button class="circular-filter-btn settings-tab-btn" data-filter="general">General</button>
+                        </div>
+                        <div id="circulars-list">
+                            <!-- Circulars will be injected here by JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings Content -->
+                <div id="content-settings" class="content-wrapper">
+                    <div class="section-card">
+                        <h3>Profile & Preferences</h3>
+                        <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 20px;">
+                            <div style="width: 100px; height: 100px; border-radius: 50%; overflow: hidden; border: 3px solid var(--primary-color);">
+                                <img src="mug.png" alt="User Avatar" style="width: 100%; height: 100%; object-fit: cover;">
+                            </div>
+                            <div>
+                                <h4 class="text-xl font-bold">Piyush</h4>
+                                <p class="text-light">KRMU-22-12345</p>
+                            </div>
+                            <div style="margin-left: auto; display: flex; align-items: center; gap: 15px;">
+                                <label for="toggle-theme" class="text-light">Dark Mode</label>
+                                <label class="switch">
+                                    <input type="checkbox" id="toggle-theme" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section-card" style="border-color: var(--error-color); box-shadow: 0 0 15px rgba(220, 53, 69, 0.2);">
+                        <h3><i class="fas fa-shield-alt"></i> Security Center</h3>
+                        <div class="settings-tabs">
+                            <button class="settings-tab-btn active" data-tab="security">Password & 2FA</button>
+                            <button class="settings-tab-btn" data-tab="notifications">Notifications</button>
+                        </div>
+
+                        <div id="tab-security" class="settings-tab-content active" style="padding-top: 20px;">
+                            <div class="settings-section">
+                                <h4><i class="fas fa-key"></i> Change Password</h4>
+                                <div class="settings-input-group">
+                                    <label for="current-password">Current Password</label>
+                                    <input type="password" id="current-password" placeholder="••••••••••••">
+                                </div>
+                                <div class="settings-input-group">
+                                    <label for="new-password">New Password</label>
+                                    <input type="password" id="new-password" placeholder="Enter a strong new password">
+                                    <div class="password-strength-meter">
+                                        <div class="strength-bar"></div><div class="strength-bar"></div><div class="strength-bar"></div><div class="strength-bar"></div>
+                                    </div>
+                                </div>
+                                <button class="btn-primary" style="width: 100%; max-width: 400px; margin-top: 1rem;">Update Password</button>
+                            </div>
+                            <hr style="border-color: var(--border-soft); margin: 2rem 0;">
+                            <div class="settings-section">
+                                <h4><i class="fas fa-shield-alt"></i> Two-Factor Authentication (2FA)</h4>
+                                <div class="two-factor-status">
+                                    <p class="text-light">Status: <strong style="color: var(--error-color);">Disabled</strong></p>
+                                    <label class="switch">
+                                        <input type="checkbox" id="toggle-2fa">
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="tab-notifications" class="settings-tab-content">
+                            <div class="settings-section">
+                                <h4>Notification Preferences</h4>
+                                <p class="text-light mb-6">Choose how you want to be notified about important updates.</p>
+                                
+                                <div class="notification-setting">
+                                    <div class="notification-setting-icon"><i class="fas fa-calendar-times"></i></div>
+                                    <div class="notification-setting-text">
+                                        <span>Attendance Alerts</span>
+                                        <small>Get notified when your attendance drops below 75%.</small>
+                                    </div>
+                                    <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+                                </div>
+
+                                <div class="notification-setting">
+                                    <div class="notification-setting-icon"><i class="fas fa-graduation-cap"></i></div>
+                                    <div class="notification-setting-text">
+                                        <span>Grade & Result Releases</span>
+                                        <small>Receive an alert as soon as new grades are published.</small>
+                                    </div>
+                                    <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+                                </div>
+
+                                <div class="notification-setting">
+                                    <div class="notification-setting-icon"><i class="fas fa-bullhorn"></i></div>
+                                    <div class="notification-setting-text">
+                                        <span>New Circulars & Announcements</span>
+                                        <small>Stay updated with the latest news from the university.</small>
+                                    </div>
+                                    <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+                                </div>
+
+                                <div class="notification-setting">
+                                    <div class="notification-setting-icon"><i class="fas fa-money-bill-wave"></i></div>
+                                    <div class="notification-setting-text">
+                                        <span>Fee Payment Reminders</span>
+                                        <small>Get reminders for upcoming fee payment deadlines.</small>
+                                    </div>
+                                    <label class="switch"><input type="checkbox"><span class="slider"></span></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- NEFT Payment Content -->
+                <div id="content-neft-payment" class="content-wrapper">
+                    <div id="neft-form-container" class="active">
+                        <div class="content-card">
+                            <h3>NEFT/RTGS Payment Details</h3>
+                            <p class="text-light mb-6">Use the following details to make a payment via NEFT/RTGS. After payment, generate a challan to submit to the accounts department.</p>
+                            <div class="neft-grid">
+                                <div class="neft-form-group">
+                                    <label>Beneficiary Name</label>
+                                    <input type="text" value="K.R. Mangalam University" readonly>
+                                </div>
+                                <div class="neft-form-group">
+                                    <label>Beneficiary Account Number</label>
+                                    <div>
+                                        <input type="text" id="beneficiary-acc" value="01234567890" readonly>
+                                        <button class="copy-btn" data-clipboard-target="#beneficiary-acc">Copy</button>
+                                    </div>
+                                </div>
+                                <div class="neft-form-group">
+                                    <label>Bank Name</label>
+                                    <input type="text" value="HDFC Bank" readonly>
+                                </div>
+                                <div class="neft-form-group">
+                                    <label>IFSC Code</label>
+                                    <div>
+                                        <input type="text" id="beneficiary-ifsc" value="HDFC0000123" readonly>
+                                        <button class="copy-btn" data-clipboard-target="#beneficiary-ifsc">Copy</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="content-card">
+                            <h3>Generate Challan</h3>
+                            <form id="neft-challan-form">
+                                <div class="neft-grid">
+                                    <div class="neft-form-group">
+                                        <label for="fee-type">Fee Type</label>
+                                        <select id="fee-type" onchange="updateAmount(this.value)">
+                                            <option value="">-- Select Fee Type --</option>
+                                            <option value="Tuition Fee">Tuition Fee</option>
+                                            <option value="Hostel Fee">Hostel Fee</option>
+                                            <option value="Transport Fee">Transport Fee</option>
+                                            <option value="Exam Fee">Exam Fee</option>
+                                        </select>
+                                    </div>
+                                    <div class="neft-form-group">
+                                        <label for="amount">Amount (INR)</label>
+                                        <input type="number" id="amount" placeholder="e.g., 35000" required>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn-primary mt-4">Generate Challan</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div id="challan-view-result">
+                        <!-- Challan will be generated here by JS -->
+                    </div>
+                </div>
+
+                <!-- Syllabus Modal -->
+                <div id="syllabus-modal" class="modal-overlay">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 id="syllabus-modal-title">Syllabus</h4>
+                            <button id="syllabus-modal-close-btn" class="modal-close-btn">&times;</button>
+                        </div>
+                        <div id="syllabus-modal-body">
+                            <!-- Syllabus content will be injected here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fee Modal -->
+                <div id="fee-modal" class="modal-overlay">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 id="fee-modal-title">Fee Details</h4>
+                            <button id="fee-modal-close-btn" class="modal-close-btn">&times;</button>
+                        </div>
+                        <div id="fee-modal-body">
+                            <!-- Content will be injected here by JS -->
+                        </div>
+                    </div>
+                </div>
+                <!-- LMS/Assignment Modal -->
+                <div id="lms-modal" class="modal-overlay">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 id="lms-modal-title">Assignment Details</h4>
+                            <button id="lms-modal-close-btn" class="modal-close-btn">&times;</button>
+                        </div>
+                        <div id="lms-modal-body">
+                            <!-- Content will be injected here by JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notification Modal -->
+                <div id="notification-modal" class="modal-overlay">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 id="notification-modal-title">Notification Details</h4>
+                            <button id="notification-modal-close-btn" class="modal-close-btn">&times;</button>
+                        </div>
+                        <div id="notification-modal-body">
+                            <!-- Content will be injected here by JS -->
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- 2FA Modal -->
+                <div id="modal-2fa" class="modal-overlay">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4>Enable Two-Factor Authentication</h4>
+                            <button class="modal-close-btn" data-modal="modal-2fa">&times;</button>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-light mb-4">Scan this QR code with your authenticator app.</p>
+                            <img src="Piyush.png" alt="QR Code for 2FA" width="150" height="150" class="mx-auto mb-4">
+                            <button class="btn-primary mr-2">Confirm Setup</button>
+                            <button class="btn-secondary modal-close-btn" data-modal="modal-2fa">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
